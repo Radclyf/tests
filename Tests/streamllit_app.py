@@ -168,29 +168,22 @@ def main():
         st.write(silhouette_score(dataset2.drop('HierarchicalClusteringLabel', axis=1), dataset2['HierarchicalClusteringLabel']))
 
     st.write("## Comparing KMeans and Heirarchical Results")
-    st.write("KMeans")
-    Kmeans_results = dataset.groupby('KmeansLabel').mean()
-    st.write(Kmeans_results)
-    st.write("Heirarchical Results")
-    Hierarchical_results = dataset2.groupby('HierarchicalClusteringLabel').mean()
-    st.write(Hierarchical_results)
-    st.write("KMeans")
-    Kmeans_results.index = ['G1', 'G2', 'G3']
-    st.write(Kmeans_results)
-    st.write("Heirarchical Results")
-    Hierarchical_results.index = ['G3', 'G1', 'G2']
-    Hierarchical_results.sort_index(inplace=True)
-    st.write(Hierarchical_results)
 
-    Kmeans_results.plot.bar(figsize=(10, 6))
-    plt.title('Mean Values of Clusters (KMeans)')
-    plt.xlabel('Cluster')
-    plt.ylabel('Mean Value')
-    plt.xticks(rotation=0)
-    st.pyplot(plt)
+    # Dropdown interaction for comparing KMeans and Hierarchical results
+    comparison_label = st.selectbox('Select clustering label for comparison', ['KmeansLabel', 'HierarchicalClusteringLabel'])
+    st.write("KMeans" if comparison_label == 'KmeansLabel' else "Hierarchical")
+    results = dataset.groupby(comparison_label).mean()
+    st.write(results)
 
-    Hierarchical_results.plot.bar(figsize=(10, 6))
-    plt.title('Mean Values of Clusters (Hierarchical)')
+    if comparison_label == 'HierarchicalClusteringLabel':
+        results.index = ['G3', 'G1', 'G2']
+        results.sort_index(inplace=True)
+    else:
+        results.index = ['G1', 'G2', 'G3']
+    st.write(results)
+
+    results.plot.bar(figsize=(10, 6))
+    plt.title(f'Mean Values of Clusters ({comparison_label})')
     plt.xlabel('Cluster')
     plt.ylabel('Mean Value')
     plt.xticks(rotation=0)
