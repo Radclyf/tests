@@ -14,7 +14,7 @@ from sklearn.cluster import KMeans
 import numpy as np
 
 from scipy.spatial.distance import pdist
-from scipy.cluster.hierarchy import dendrogram, linkage,cophenet
+from scipy.cluster.hierarchy import dendrogram, linkage, cophenet
 
 from scipy.cluster.hierarchy import fcluster
 
@@ -31,8 +31,8 @@ def main():
     if st.checkbox("Show raw data"):
         st.write(df)
 
-    cols_to_consider=['Avg_Credit_Limit','Total_Credit_Cards','Total_visits_bank','Total_visits_online','Total_calls_made']
-    subset=df[cols_to_consider]
+    cols_to_consider = ['Avg_Credit_Limit', 'Total_Credit_Cards', 'Total_visits_bank', 'Total_visits_online', 'Total_calls_made']
+    subset = df[cols_to_consider]
 
     st.write("## Exploratory Data Analysis")
     st.write(subset.isna().sum())
@@ -54,15 +54,15 @@ def main():
     st.pyplot(pairplot)
 
     st.write("Elbow Curve")
-    clusters=range(1,10)
-    meanDistortions=[]
+    clusters = range(1, 10)
+    meanDistortions = []
     for k in clusters:
-        model=KMeans(n_clusters=k)
+        model = KMeans(n_clusters=k)
         model.fit(subset_scaled_df)
-        prediction=model.predict(subset_scaled_df)
-        distortion=sum(np.min(cdist(subset_scaled_df, model.cluster_centers_, 'euclidean'), axis=1)) / subset_scaled_df.shape[0]
+        prediction = model.predict(subset_scaled_df)
+        distortion = sum(np.min(cdist(subset_scaled_df, model.cluster_centers_, 'euclidean'), axis=1)) / subset_scaled_df.shape[0]
         meanDistortions.append(distortion)
-    plt.figure(figsize=(8,5))
+    plt.figure(figsize=(8, 5))
     plt.plot(clusters, meanDistortions, 'bx-')
     plt.xlabel('k')
     plt.ylabel('Distortion')
@@ -70,7 +70,7 @@ def main():
     st.pyplot(plt)
 
     st.write("KMeans Clustering")
-    kmeans = KMeans(n_clusters=3, n_init = 15)
+    kmeans = KMeans(n_clusters=3, n_init=15)
     kmeans.fit(subset_scaled_df)
     st.write(kmeans)
 
@@ -78,16 +78,16 @@ def main():
     centroids = kmeans.cluster_centers_
     st.write(centroids)
     st.write("Centroids for DataFrame")
-    centroid_df = pd.DataFrame(centroids, columns = subset_scaled_df.columns )
+    centroid_df = pd.DataFrame(centroids, columns=subset_scaled_df.columns)
     st.write(centroid_df)
 
-    dataset=subset_scaled_df[:]
-    dataset['KmeansLabel']=kmeans.labels_
+    dataset = subset_scaled_df[:]
+    dataset['KmeansLabel'] = kmeans.labels_
     dataset.head(10)
     st.write(dataset)
 
     boxplot_fig, ax = plt.subplots()
-    dataset.boxplot(by='KmeansLabel', layout=(2,3), figsize=(20, 15), ax=ax)
+    dataset.boxplot(by='KmeansLabel', layout=(2, 3), figsize=(20, 15), ax=ax)
 
     # Adjust the title position
     ax.set_title("Boxplot of KMeans Labels", pad=20)  # Set the title with padding
@@ -111,45 +111,43 @@ def main():
 
     st.write("## Hierarchical Clustering")
 
-    linkage_methods=['single','complete','average','ward','median']
-    results_cophenetic_coef=[]
-    for i in linkage_methods :
-        plt.figure(figsize=(15, 13))
-        plt.xlabel('sample index')
-        plt.ylabel('Distance')
-        Z = linkage(subset_scaled_df, i)
-        cc,cophn_dist=cophenet(Z,pdist(subset_scaled_df))
-        dendrogram(Z,leaf_rotation=90.0,p=5,leaf_font_size=10,truncate_mode='level')
-        plt.tight_layout()
-        plt.title("Linkage Type: "+ i +" having cophenetic coefficient : "+str(round(cc,3)) )
-        st.pyplot(plt)
-        results_cophenetic_coef.append((i,cc))
-        print (i,cc)
+    linkage_methods = ['single', 'complete', 'average', 'ward', 'median']
+    selected_linkage = st.selectbox('Select linkage method', linkage_methods)
 
-    results_cophenetic_coef_df=pd.DataFrame(results_cophenetic_coef,columns=['LinkageMethod','CopheneticCoefficient'])
+    plt.figure(figsize=(15, 13))
+    plt.xlabel('sample index')
+    plt.ylabel('Distance')
+    Z = linkage(subset_scaled_df, selected_linkage)
+    cc, cophn_dist = cophenet(Z, pdist(subset_scaled_df))
+    dendrogram(Z, leaf_rotation=90.0, p=5, leaf_font_size=10, truncate_mode='level')
+    plt.tight_layout()
+    plt.title("Linkage Type: " + selected_linkage + " having cophenetic coefficient : " + str(round(cc, 3)))
+    st.pyplot(plt)
+
+    results_cophenetic_coef_df = pd.DataFrame([(selected_linkage, cc)], columns=['LinkageMethod', 'CopheneticCoefficient'])
     st.write(results_cophenetic_coef_df)
 
-    plt.figure(figsize=(10,8))
+    plt.figure(figsize=(10, 8))
     Z = linkage(subset_scaled_df, 'complete', metric='euclidean')
 
     dendrogram(
         Z,
         truncate_mode='lastp',  # show only the last p merged clusters
-        p=25 # show only the last p merged clusters
+        p=25  # show only the last p merged clusters
     )
     st.pyplot(plt)
 
-    max_d=5
+    max_d = 5
     clusters = fcluster(Z, max_d, criterion='distance')
     set(clusters)
 
-    dataset2=subset_scaled_df[:]
-    dataset2['HierarchicalClusteringLabel']=clusters
+    dataset2 = subset_scaled_df[:]
+    dataset2['HierarchicalClusteringLabel'] = clusters
     dataset2.head(3)
     st.write(dataset2)
 
     boxplot2_fig, ax = plt.subplots()
-    dataset2.boxplot(by='HierarchicalClusteringLabel', layout=(2,3), figsize=(20, 15), ax=ax)
+    dataset2.boxplot(by='HierarchicalClusteringLabel', layout=(2, 3), figsize=(20, 15), ax=ax)
 
     # Adjust the title position
     ax.set_title("Boxplot of KMeans Labels", pad=20)  # Set the title with padding
@@ -161,22 +159,22 @@ def main():
     st.pyplot(boxplot2_fig)
 
     st.write("Silhouette Score for KmeansLabel")
-    st.write(silhouette_score(dataset.drop('KmeansLabel',axis=1),dataset['KmeansLabel']))
+    st.write(silhouette_score(dataset.drop('KmeansLabel', axis=1), dataset['KmeansLabel']))
     st.write("Silhouette Score for HierarchicalClusteringLabel")
-    st.write(silhouette_score(dataset2.drop('HierarchicalClusteringLabel',axis=1),dataset2['HierarchicalClusteringLabel']))
+    st.write(silhouette_score(dataset2.drop('HierarchicalClusteringLabel', axis=1), dataset2['HierarchicalClusteringLabel']))
 
     st.write("## Comparing KMeans and Heirarchical Results")
     st.write("KMeans")
-    Kmeans_results=dataset.groupby('KmeansLabel').mean()
+    Kmeans_results = dataset.groupby('KmeansLabel').mean()
     st.write(Kmeans_results)
     st.write("Heirarchical Results")
-    Hierarchical_results=dataset2.groupby('HierarchicalClusteringLabel').mean()
+    Hierarchical_results = dataset2.groupby('HierarchicalClusteringLabel').mean()
     st.write(Hierarchical_results)
     st.write("KMeans")
-    Kmeans_results.index=['G1','G2','G3']
+    Kmeans_results.index = ['G1', 'G2', 'G3']
     st.write(Kmeans_results)
     st.write("Heirarchical Results")
-    Hierarchical_results.index=['G3','G1','G2']
+    Hierarchical_results.index = ['G3', 'G1', 'G2']
     Hierarchical_results.sort_index(inplace=True)
     st.write(Hierarchical_results)
 
@@ -194,11 +192,12 @@ def main():
     plt.xticks(rotation=0)
     st.pyplot(plt)
 
-    subset['KmeansLabel']=dataset['KmeansLabel']
+    subset['KmeansLabel'] = dataset['KmeansLabel']
     for each in cols_to_consider:
         st.write(each)
-        st.write(subset.groupby('KmeansLabel').describe().round()[each][['count','mean','min','max']])
+        st.write(subset.groupby('KmeansLabel').describe().round()[each][['count', 'mean', 'min', 'max']])
         st.write("\n\n")
+
 
 if __name__ == "__main__":
     main()
