@@ -100,22 +100,13 @@ def main():
 
     st.write("## Visualizing the Clusters")
 
-    scatter_fig, ax = plt.subplots()
-    ax.scatter(dataset['Avg_Credit_Limit'], dataset['Total_visits_online'], c=kmeans.labels_, cmap='viridis')
-    ax.set_xlabel('Avg_Credit_Limit')
-    ax.set_ylabel('Total_visits_online')
-    st.pyplot(scatter_fig)
+    selected_variable_x = st.selectbox('Select X-axis variable', cols_to_consider[:-1])
+    selected_variable_y = st.selectbox('Select Y-axis variable', cols_to_consider[:-1])
 
     scatter_fig, ax = plt.subplots()
-    ax.scatter(dataset['Avg_Credit_Limit'], dataset['Total_visits_bank'], c=kmeans.labels_, cmap='viridis')
-    ax.set_xlabel('Avg_Credit_Limit')
-    ax.set_ylabel('Total_visits_bank')
-    st.pyplot(scatter_fig)
-
-    scatter_fig, ax = plt.subplots()
-    ax.scatter(dataset['Avg_Credit_Limit'], dataset['Total_calls_made'], c=kmeans.labels_, cmap='viridis')
-    ax.set_xlabel('Avg_Credit_Limit')
-    ax.set_ylabel('Total_calls_made')
+    ax.scatter(dataset[selected_variable_x], dataset[selected_variable_y], c=kmeans.labels_, cmap='viridis')
+    ax.set_xlabel(selected_variable_x)
+    ax.set_ylabel(selected_variable_y)
     st.pyplot(scatter_fig)
 
     st.write("## Hierarchical Clustering")
