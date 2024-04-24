@@ -44,10 +44,18 @@ def main():
 
     st.write("## Data Visualization")
 
-    st.write("Heatmap")
-    fig, ax = plt.subplots()
-    sns.heatmap(subset_scaled_df.corr(), annot=True, ax=ax)
-    st.pyplot(fig)
+    # Checkbox to show/hide heatmap
+    show_heatmap = st.checkbox("Show Heatmap")
+    if show_heatmap:
+        fig, ax = plt.subplots()
+        sns.heatmap(subset_scaled_df.corr(), annot=True, ax=ax)
+        st.pyplot(fig)
+
+    # Checkbox to show/hide pairplot
+    show_pairplot = st.checkbox("Show Pairplot")
+    if show_pairplot:
+        pairplot = sns.pairplot(subset_scaled_df)
+        st.pyplot(pairplot)
 
     st.write("Pairplot")
     pairplot = sns.pairplot(subset_scaled_df)
