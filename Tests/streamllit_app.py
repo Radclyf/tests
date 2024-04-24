@@ -19,7 +19,7 @@ from scipy.cluster.hierarchy import dendrogram, linkage, cophenet
 from scipy.cluster.hierarchy import fcluster
 
 def main():
-    st.title('Customer Segmentation using Credit Card Data')
+    st.title('ChannelSegmenter: Credit Card Costumer Inquiry Channel Segmentation App')
 
     # Load data
     @st.cache
