@@ -210,6 +210,13 @@ num_rows = len(cols_to_consider) // num_columns
 if len(cols_to_consider) % num_columns != 0:
     num_rows += 1
 
+st.write("## Summary Statistics by Cluster")
+
+# Calculate the number of rows required
+num_rows = len(cols_to_consider) // num_columns
+if len(cols_to_consider) % num_columns != 0:
+    num_rows += 1
+
 # Loop through each variable and create a table for each
 for i in range(num_rows):
     # Start a new row
