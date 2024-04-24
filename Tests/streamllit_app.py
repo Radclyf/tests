@@ -158,10 +158,14 @@ def main():
     # Display the plot in Streamlit
     st.pyplot(boxplot2_fig)
 
-    st.write("Silhouette Score for KmeansLabel")
-    st.write(silhouette_score(dataset.drop('KmeansLabel', axis=1), dataset['KmeansLabel']))
-    st.write("Silhouette Score for HierarchicalClusteringLabel")
-    st.write(silhouette_score(dataset2.drop('HierarchicalClusteringLabel', axis=1), dataset2['HierarchicalClusteringLabel']))
+    # Dropdown interaction for silhouette score
+    selected_label = st.selectbox('Select clustering label for silhouette score', ['KmeansLabel', 'HierarchicalClusteringLabel'])
+    if selected_label == 'KmeansLabel':
+        st.write("Silhouette Score for KmeansLabel")
+        st.write(silhouette_score(dataset.drop('KmeansLabel', axis=1), dataset['KmeansLabel']))
+    elif selected_label == 'HierarchicalClusteringLabel':
+        st.write("Silhouette Score for HierarchicalClusteringLabel")
+        st.write(silhouette_score(dataset2.drop('HierarchicalClusteringLabel', axis=1), dataset2['HierarchicalClusteringLabel']))
 
     st.write("## Comparing KMeans and Heirarchical Results")
     st.write("KMeans")
@@ -197,15 +201,6 @@ def main():
         st.write(each)
         st.write(subset.groupby('KmeansLabel').describe().round()[each][['count', 'mean', 'min', 'max']])
         st.write("\n\n")
-
-    # Dropdown interaction for silhouette score
-    selected_label = st.selectbox('Select clustering label for silhouette score', ['KmeansLabel', 'HierarchicalClusteringLabel'])
-    if selected_label == 'KmeansLabel':
-        st.write("Silhouette Score for KmeansLabel")
-        st.write(silhouette_score(dataset.drop('KmeansLabel', axis=1), dataset['KmeansLabel']))
-    elif selected_label == 'HierarchicalClusteringLabel':
-        st.write("Silhouette Score for HierarchicalClusteringLabel")
-        st.write(silhouette_score(dataset2.drop('HierarchicalClusteringLabel', axis=1), dataset2['HierarchicalClusteringLabel']))
 
 if __name__ == "__main__":
     main()
