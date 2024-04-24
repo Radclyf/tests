@@ -57,10 +57,6 @@ def main():
         pairplot = sns.pairplot(subset_scaled_df)
         st.pyplot(pairplot)
 
-    st.write("Pairplot")
-    pairplot = sns.pairplot(subset_scaled_df)
-    st.pyplot(pairplot)
-
     st.write("Elbow Curve")
     clusters = range(1, 10)
     meanDistortions = []
