@@ -200,37 +200,31 @@ def main():
     plt.xticks(rotation=0)
     st.pyplot(plt)
 
+    subset['KmeansLabel'] = dataset['KmeansLabel']
+
+    # Summary Statistics by Cluster
     st.write("## Summary Statistics by Cluster")
 
-# Define the number of columns for the layout
-num_columns = 2
+    # Calculate the number of columns
+    num_columns = 2
 
-# Calculate the number of rows required
-num_rows = len(cols_to_consider) // num_columns
-if len(cols_to_consider) % num_columns != 0:
-    num_rows += 1
+    # Calculate the number of rows required
+    num_rows = len(cols_to_consider) // num_columns
+    if len(cols_to_consider) % num_columns != 0:
+        num_rows += 1
 
-st.write("## Summary Statistics by Cluster")
-
-# Calculate the number of rows required
-num_rows = len(cols_to_consider) // num_columns
-if len(cols_to_consider) % num_columns != 0:
-    num_rows += 1
-
-# Loop through each variable and create a table for each
-for i in range(num_rows):
-    # Start a new row
-    row = st.columns(num_columns)
-    for j in range(num_columns):
-        idx = i * num_columns + j
-        if idx < len(cols_to_consider):
-            variable = cols_to_consider[idx]
-            table_data = subset.groupby('KmeansLabel').describe().round()[variable][['count', 'mean', 'min', 'max']]
-            with row[j]:
-                st.write("**{}**".format(variable))
-                st.write(table_data)
-
-    
+    # Loop through each variable and create a table for each
+    for i in range(num_rows):
+        # Start a new row
+        row = st.columns(num_columns)
+        for j in range(num_columns):
+            idx = i * num_columns + j
+            if idx < len(cols_to_consider):
+                variable = cols_to_consider[idx]
+                table_data = subset.groupby('KmeansLabel').describe().round()[variable][['count', 'mean', 'min', 'max']]
+                with row[j]:
+                    st.write("**{}**".format(variable))
+                    st.write(table_data)
 
 if __name__ == "__main__":
     main()
