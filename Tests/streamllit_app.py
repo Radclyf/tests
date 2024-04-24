@@ -24,7 +24,7 @@ def main():
     # Load data
     @st.cache
     def load_data():
-        return pd.read_csv('raw_data/credit_card_customer_data.csv')
+        return pd.read_csv('Tests/raw_data/credit_card_customer_data.csv')
 
     df = load_data()
 
